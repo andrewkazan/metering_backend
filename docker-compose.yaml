@@ -1,0 +1,23 @@
+services:
+    mongodb:
+        image: mongo
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - MONGO_INITDB_ROOT_USERNAME=root
+            - MONGO_INITDB_ROOT_PASSWORD=pass12345
+        volumes:
+            - /Users/andrew/Documents/01-2-home-projects/metering_mercury/metering_backend/mongo_db:/data/db
+        ports:
+            - '27017:27017'
+        restart: on-failure:3
+        command: [--auth]
+
+    backend:
+        depends_on:
+            - mongodb
+        restart: on-failure:3
+        ports:
+            - '3000:3000'
+
+
