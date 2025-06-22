@@ -1,29 +1,16 @@
 import Koa from 'koa';
-import Router from 'koa-router';
 import path from 'path';
+import koaStatic from 'koa-static';
+import koaBodyParser from 'koa-bodyparser';
+import { router } from '../http/routes/routes.js';
+import { applyMiddleware } from '../http/middleware/apply-middleware.js';
 
 const app = new Koa();
 
-app.use(require('koa-static')(path.join(__dirname, 'public')));
-app.use(require('koa-bodyparser')());
+applyMiddleware(app);
 
-const router = new Router({ prefix: '/api' });
-
-app.use(async (ctx, next) => {
-    try {
-        await next();
-    } catch (err) {
-        if (err.status) {
-            ctx.status = err.status;
-            ctx.body = { error: err.message };
-        } else {
-            console.error(err);
-            ctx.status = 500;
-            ctx.body = { error: 'Internal server error' };
-        }
-    }
-});
-
-app.use(router.routes());
+app.use(koaStatic(path.join(path.dirname(new URL(import.meta.url).pathname), 'public')));
+app.use(koaBodyParser());
+app.use(router.routes()).use(router.allowedMethods());
 
 export default app;

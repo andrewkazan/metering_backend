@@ -1,15 +1,9 @@
-import Router from '@koa/router';
+export const meteringMiddleware = async (ctx, next) => {
+  const { method, url } = ctx.request;
 
-const router = new Router();
+  if (url.startsWith('/api')) {
+    console.log(`[${new Date().toISOString()}] ${method} ${url}`);
+  }
 
-router.get('/', (ctx, next) => {
-    console.log('--- get - ctx ---', ctx);
-    next();
-});
-
-router.post('/', (ctx, next) => {
-    console.log('--- post - ctx ---', ctx);
-    next();
-});
-
-export { router };
+  await next();
+};

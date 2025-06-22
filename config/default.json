@@ -5,9 +5,10 @@
         "clientURL": "http://localhost:3000"
     },
     "mongo": {
-        "url": "mongodb://localhost:27017/",
+        "url": "mongodb://root:pass12345@mongodb:27017",
         "dbUser": "root",
-        "dbPass": "pass12345"
+        "dbPass": "pass12345",
+        "authSource": "admin"
     },
     "auth": {
         "salt": "salt",

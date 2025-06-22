@@ -1,22 +1,20 @@
-import Koa from 'koa';
 import mongoose from 'mongoose';
 import config from 'config';
-import { applyMiddleware } from './http/middleware/apply-middleware.js';
+import app from './app/app.js';
 
 const DB_URL = config.get('mongo.url');
 const DB_USER = config.get('mongo.dbUser');
 const DB_PASS = config.get('mongo.dbPass');
+const DB_AUTH_SOURCE = config.get('mongo.authSource');
 const APP_PORT = config.get('app.port') || 3001;
 
 mongoose.set('debug', true);
-
-const app = new Koa();
-applyMiddleware(app);
 
 mongoose
   .connect(DB_URL, {
     user: DB_USER,
     pass: DB_PASS,
+    authSource: DB_AUTH_SOURCE,
   })
   .then(() => {
     console.log('Connected to MongoDB');
