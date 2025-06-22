@@ -1,0 +1,10 @@
+services:
+    backend:
+        build:
+            context: .
+            dockerfile: dockerfile.prod
+        container_name: backend-metering
+        environment:
+            - NODE_ENV=production
+            - MONGO_URL=mongodb://root:pass12345@mongodb:27017
+        # Без volumes
