@@ -1,6 +1,14 @@
-const errorMiddleware = (ctx, status, message) => {
-    ctx.status = status || 500;
-    ctx.body = { message: message || 'Непредвиденная ошибка' };
+export const errorMiddleware = async (ctx, next) => {
+  try {
+    await next();
+  } catch (err) {
+    if (err.status) {
+      ctx.status = err.status;
+      ctx.body = { error: err.message };
+    } else {
+      console.error(err);
+      ctx.status = 500;
+      ctx.body = { error: 'Internal server error' };
+    }
+  }
 };
-
-export { errorMiddleware };

@@ -10,3 +10,6 @@ config/**/local*
 # ci template files ignore
 .dockerignore
 dockerfile.dev
+
+# data base
+mongo_db/
