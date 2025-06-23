@@ -53,7 +53,7 @@ class TokenService {
     }
   }
 
-  validateAccessToken(token) {
+  validateToken(token) {
     try {
       return jwt.verify(token, TOKEN_SECRET);
     } catch (e) {
