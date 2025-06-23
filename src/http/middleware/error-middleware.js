@@ -4,7 +4,7 @@ export const errorMiddleware = async (ctx, next) => {
   } catch (err) {
     if (err.status) {
       ctx.status = err.status;
-      ctx.body = { error: err.message };
+      ctx.body = { error: err.message, ...(err.errors ? { errors: err.errors } : {}) };
     } else {
       console.error(err);
       ctx.status = 500;

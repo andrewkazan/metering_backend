@@ -1,5 +1,5 @@
 import { UserService } from '../service/user-service.js';
-import { NotAuthorized } from '../errors/not-authorized.js';
+import { ApiError } from '../errors/api-error.js';
 import config from 'config';
 
 const APP_URL = config.get('app.clientURL');
@@ -61,7 +61,7 @@ class UserController {
 
   async getUsers(ctx) {
     if (!ctx.isAuthenticated()) {
-      throw new NotAuthorized(ctx);
+      throw ApiError.Unauthorized();
     }
 
     const users = await UserService.getUsers();

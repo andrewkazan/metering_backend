@@ -1,8 +1,7 @@
 import { UserModel } from '../../models/user/user-model.js';
 import { TokenService } from './token-service.js';
 import { MailService } from './mail-service.js';
-import { NotAuthorized } from '../errors/not-authorized.js';
-import { BadRequest } from '../errors/bad-request.js';
+import { ApiError } from '../errors/api-error.js';
 import { v4 as uuidv4 } from 'uuid';
 import config from 'config';
 
@@ -13,7 +12,7 @@ class UserService {
     const candidate = await UserModel.findOne({ email });
 
     if (candidate) {
-      throw new BadRequest({ ctx, message: `User with email ${email} already exist` });
+      throw ApiError.badRequest({ message: `User with email ${email} already exist` });
     }
 
     const activationLink = uuidv4();
@@ -29,7 +28,7 @@ class UserService {
     const user = await UserModel.findOne({ activationLink });
 
     if (!user) {
-      throw new BadRequest({ ctx, message: 'Not correct link of activation' });
+      throw ApiError.BadRequest({ message: 'Not correct link of activation' });
     }
 
     user.isActivated = true;
@@ -40,13 +39,13 @@ class UserService {
     const logoutUser = await UserModel.login(email, password);
 
     if (!logoutUser) {
-      throw new BadRequest({ ctx, message: 'Wrong login or password' });
+      throw ApiError.BadRequest({ message: 'Wrong login or password' });
     }
 
     const { isActivated = false } = logoutUser || {};
 
     if (!isActivated) {
-      throw new BadRequest({ ctx, message: 'Confirm your email' });
+      throw ApiError.BadRequest({ message: 'Confirm your email' });
     }
 
     const user = await UserModel.findOne({ email });
@@ -65,19 +64,19 @@ class UserService {
 
   async refresh(ctx, refreshToken) {
     if (!refreshToken) {
-      throw new NotAuthorized(ctx);
+      throw ApiError.Unauthorized();
     }
 
-    const validateToken = TokenService.validateAccessToken(refreshToken);
+    const validateToken = TokenService.validateToken(refreshToken);
 
     if (!validateToken) {
-      throw new NotAuthorized({ ctx });
+      throw ApiError.Unauthorized();
     }
 
     const token = TokenService.removeToken(refreshToken);
 
     if (!token) {
-      throw new BadRequest({ ctx, message: `User already exit or not exist` });
+      throw ApiError.BadRequest({ message: `User already exit or not exist` });
     }
 
     const user = await UserModel.findOne({ id: token.sub });
