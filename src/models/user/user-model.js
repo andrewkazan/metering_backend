@@ -43,6 +43,10 @@ const userSchema = new mongoose.Schema(
       required: true,
       select: false,
     },
+    name: {
+      type: String,
+      required: true,
+    },
     salt: {
       type: String,
       select: false,
@@ -81,7 +85,7 @@ userSchema.methods.checkPassword = async function (password) {
   return hash === this.password;
 };
 
-userSchema.statics.login = async function (email, password) {
+userSchema.statics.login = async function ({ email, password }) {
   const user = await this.findOne({ email }, {}).select('+password +salt');
 
   if (!user) {
