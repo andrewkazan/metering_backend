@@ -1,5 +1,4 @@
 import passport from 'koa-passport';
-import jwt from 'jsonwebtoken';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import config from 'config';
 import { TokenModel } from '../../../models/token/token-model.js';
@@ -16,8 +15,6 @@ export const instanceOfJWTStrategy = new JwtStrategy(opts, async function (userD
   const { sub } = userData;
 
   const findUserByToken = await TokenModel.findOne({ sub });
-
-  console.log('--- findUserByToken ---', findUserByToken);
 
   if (findUserByToken) {
     return done(null, findUserByToken);
