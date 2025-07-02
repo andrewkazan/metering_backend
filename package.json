@@ -16,6 +16,7 @@
   "main": "dist/index.js",
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "^24.0.10",
     "chai": "^5.2.0",
     "colors": "^1.4.0",
     "esbuild": "^0.21.3",

@@ -10,7 +10,7 @@ const APP_URL = config.get('app.apiUrl');
 class UserService {
   async registration({ email, password, name }) {
     if (!email || !password || !name) {
-      throw ApiError.BadRequest({ message: 'Has not required field: email, password or name' });
+      throw ApiError.BadRequest({ message: 'Has not required fields: email, password or name' });
     }
 
     const findSuchUser = await UserModel.findOne({ email });
@@ -95,7 +95,7 @@ class UserService {
     return await TokenService.generateTokens(user);
   }
 
-  async getUsers() {
+  async list() {
     const users = await UserModel.find();
     return [...users];
   }

@@ -39,12 +39,12 @@ class UserController {
     ctx.body = { ...tokens, message: 'New tokens' };
   }
 
-  async getUsers(ctx) {
+  async list(ctx) {
     if (!ctx.isAuthenticated()) {
       throw ApiError.Unauthorized();
     }
 
-    const users = await UserService.getUsers();
+    const users = await UserService.list();
     ctx.status = 200;
     ctx.body = users;
   }
