@@ -8,17 +8,22 @@ import config from 'config';
 const APP_URL = config.get('app.apiUrl');
 
 class UserService {
-  async registration(ctx, email, password) {
-    const candidate = await UserModel.findOne({ email });
+  async registration({ email, password, name }) {
+    if (!email || !password || !name) {
+      throw ApiError.BadRequest({ message: 'Has not required field: email, password or name' });
+    }
 
-    if (candidate) {
-      throw ApiError.badRequest({ message: `User with email ${email} already exist` });
+    const findSuchUser = await UserModel.findOne({ email });
+
+    if (findSuchUser) {
+      throw ApiError.BadRequest({ message: `User with email ${email} already exist` });
     }
 
     const activationLink = uuidv4();
-    const user = new UserModel({ email, password, activationLink });
+    const user = new UserModel({ email, password, name, activationLink });
 
-    await MailService.sendActivationMail(email, `${APP_URL}/api/activate/${activationLink}`);
+    // TODO make mail service
+    // await MailService.sendActivationMail(email, `${APP_URL}/api/activate/${activationLink}`);
 
     await user.save();
     return user;
@@ -32,14 +37,19 @@ class UserService {
     }
 
     user.isActivated = true;
+
     await user.save();
   }
 
   async login(ctx, email, password) {
-    const logoutUser = await UserModel.login(email, password);
+    if (!email || !password) {
+      throw ApiError.BadRequest({ message: "Hasn't email or password" });
+    }
+
+    const logoutUser = await UserModel.login({ email, password });
 
     if (!logoutUser) {
-      throw ApiError.BadRequest({ message: 'Wrong login or password' });
+      throw ApiError.BadRequest({ message: "Hasn't such user" });
     }
 
     const { isActivated = false } = logoutUser || {};
@@ -47,6 +57,8 @@ class UserService {
     if (!isActivated) {
       throw ApiError.BadRequest({ message: 'Confirm your email' });
     }
+
+    // Тут ищем есть ли уже токены у этого пользователя? Если есть, удаляем из списка токенов, делаем новые и отправляем ему
 
     const user = await UserModel.findOne({ email });
     const tokens = await TokenService.generateTokens(user);
@@ -56,7 +68,7 @@ class UserService {
 
   async logout(ctx, refreshToken) {
     if (!refreshToken) {
-      throw new NotAuthorized({ ctx, message: 'user already exit or not exist' });
+      throw new ApiError.BadRequest({ ctx, message: 'user already exit or not exist' });
     }
 
     return await TokenService.removeToken(refreshToken);

@@ -23,8 +23,8 @@
         "jwt": {
             "algorithm": "HS256",
             "secret": "secret123",
-            "accessTokenExpires": "30s",
-            "refreshTokenExpires": "3m"
+            "accessTokenExpires": "15m",
+            "refreshTokenExpires": "30m"
         }
     },
     "mailer": {
