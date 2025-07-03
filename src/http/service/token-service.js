@@ -1,7 +1,7 @@
 import config from 'config';
 import jwt from 'jsonwebtoken';
-import { TokenModel } from '../../models/token/token-model.js';
-import { UserModel } from '../../models/user/user-model.js';
+import { TokenSchema } from '../../schemas/token/token-schema.js';
+import { UserSchema } from '../../schemas/user/user-schema.js';
 
 const TOKEN_SECRET = config.get('auth.jwt.secret');
 const TOKEN_ALGORITHM = config.get('auth.jwt.algorithm');
@@ -20,7 +20,7 @@ class TokenService {
       expiresIn: REFRESH_TOKEN_EXPIRE_IN,
     });
 
-    await TokenModel.create({
+    await TokenSchema.create({
       accessToken,
       refreshToken,
       sub: user.id,
@@ -31,10 +31,10 @@ class TokenService {
   }
 
   async refreshTokens(accessToken, refreshToken) {
-    const token = await TokenModel.findOne({ accessToken, refreshToken }).exec();
+    const token = await TokenSchema.findOne({ accessToken, refreshToken }).exec();
 
     if (token) {
-      const user = await UserModel.findById(token.sub);
+      const user = await UserSchema.findById(token.sub);
       const [accessToken, refreshToken] = await this.generateTokens(user);
       return [accessToken, refreshToken];
     } else {
@@ -43,7 +43,7 @@ class TokenService {
   }
 
   async removeToken(refreshToken) {
-    const removedToken = await TokenModel.findOneAndDelete({ refreshToken }).exec();
+    const removedToken = await TokenSchema.findOneAndDelete({ refreshToken }).exec();
 
     if (removedToken) {
       const { refreshToken } = removedToken || {};

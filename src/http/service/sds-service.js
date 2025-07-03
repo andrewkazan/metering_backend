@@ -1,4 +1,4 @@
-import { SDSModel } from '../../models/sds/sds-model.js';
+import { SdsSchema } from '../../schemas/sds/sds-schema.js';
 import { ApiError } from '../errors/api-error.js';
 
 class SDSService {
@@ -7,7 +7,7 @@ class SDSService {
       throw ApiError.BadRequest({ message: 'Has not required fields: name, model, phone or comment' });
     }
 
-    const SDS = new SDSModel({ name, model, phone, comment });
+    const SDS = new SdsSchema({ name, model, phone, comment });
 
     await SDS.save();
     return SDS;
@@ -18,7 +18,7 @@ class SDSService {
       throw ApiError.BadRequest({ message: 'Need id for return SDS' });
     }
 
-    const findSuchSDS = await SDSModel.findById(id);
+    const findSuchSDS = await SdsSchema.findById(id).populate('numSDSs');
 
     if (!findSuchSDS) {
       throw ApiError.BadRequest({ message: 'Has not such SDS' });
@@ -32,7 +32,7 @@ class SDSService {
       throw ApiError.BadRequest({ message: 'Has not required fields: name, model, phone or comment' });
     }
 
-    const updatedSDS = await SDSModel.findByIdAndUpdate(SDSData.id, SDSData, { new: true });
+    const updatedSDS = await SdsSchema.findByIdAndUpdate(SDSData.id, SDSData, { new: true });
 
     if (!updatedSDS) {
       throw ApiError.BadRequest({ message: 'Has not such SDS' });
@@ -46,7 +46,7 @@ class SDSService {
       throw ApiError.BadRequest({ message: 'Need id for delete SDS' });
     }
 
-    const deletedSDS = await SDSModel.findByIdAndDelete(id);
+    const deletedSDS = await SdsSchema.findByIdAndDelete(id);
 
     if (!deletedSDS) {
       throw ApiError.BadRequest({ message: 'Has not such SDS' });
@@ -56,7 +56,7 @@ class SDSService {
   }
 
   async list() {
-    const SDSs = await SDSModel.find();
+    const SDSs = await SdsSchema.find();
     return [...SDSs];
   }
 }

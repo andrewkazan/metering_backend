@@ -1,4 +1,4 @@
-import { DeviceModel } from '../../models/device/device-model.js';
+import { DeviceSchema } from '../../schemas/device/device-schema.js';
 import { ApiError } from '../errors/api-error.js';
 
 class DeviceService {
@@ -7,7 +7,7 @@ class DeviceService {
       throw ApiError.BadRequest({ message: 'Has not required fields: name, model, IMEI, kind or comment' });
     }
 
-    const device = new DeviceModel({ name, model, IMEI, kind, comment });
+    const device = new DeviceSchema({ name, model, IMEI, kind, comment });
 
     await device.save();
     return device;
@@ -18,7 +18,7 @@ class DeviceService {
       throw ApiError.BadRequest({ message: 'Need id for return device' });
     }
 
-    const findSuchDevice = await DeviceModel.findById(id);
+    const findSuchDevice = await DeviceSchema.findById(id);
 
     if (!findSuchDevice) {
       throw ApiError.BadRequest({ message: 'Has not such object' });
@@ -32,7 +32,7 @@ class DeviceService {
       throw ApiError.BadRequest({ message: 'Has not required fields: name, model, IMEI, kind or comment' });
     }
 
-    const updatedDevice = await DeviceModel.findByIdAndUpdate(deviceData.id, deviceData, { new: true });
+    const updatedDevice = await DeviceSchema.findByIdAndUpdate(deviceData.id, deviceData, { new: true });
 
     if (!updatedDevice) {
       throw ApiError.BadRequest({ message: 'Has not such device' });
@@ -46,7 +46,7 @@ class DeviceService {
       throw ApiError.BadRequest({ message: 'Need id for delete device' });
     }
 
-    const deletedDevice = await DeviceModel.findByIdAndDelete(id);
+    const deletedDevice = await DeviceSchema.findByIdAndDelete(id);
 
     if (!deletedDevice) {
       throw ApiError.BadRequest({ message: 'Has not such device' });
@@ -56,7 +56,7 @@ class DeviceService {
   }
 
   async list() {
-    const devices = await DeviceModel.find();
+    const devices = await DeviceSchema.find();
     return [...devices];
   }
 }

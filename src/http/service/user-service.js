@@ -1,4 +1,4 @@
-import { UserModel } from '../../models/user/user-model.js';
+import { UserSchema } from '../../schemas/user/user-schema.js';
 import { TokenService } from './token-service.js';
 import { MailService } from './mail-service.js';
 import { ApiError } from '../errors/api-error.js';
@@ -13,14 +13,14 @@ class UserService {
       throw ApiError.BadRequest({ message: 'Has not required fields: email, password or name' });
     }
 
-    const findSuchUser = await UserModel.findOne({ email });
+    const findSuchUser = await UserSchema.findOne({ email });
 
     if (findSuchUser) {
       throw ApiError.BadRequest({ message: `User with email ${email} already exist` });
     }
 
     const activationLink = uuidv4();
-    const user = new UserModel({ email, password, name, activationLink });
+    const user = new UserSchema({ email, password, name, activationLink });
 
     // TODO make mail service
     // await MailService.sendActivationMail(email, `${APP_URL}/api/activate/${activationLink}`);
@@ -30,7 +30,7 @@ class UserService {
   }
 
   async activate(ctx, activationLink) {
-    const user = await UserModel.findOne({ activationLink });
+    const user = await UserSchema.findOne({ activationLink });
 
     if (!user) {
       throw ApiError.BadRequest({ message: 'Not correct link of activation' });
@@ -46,7 +46,7 @@ class UserService {
       throw ApiError.BadRequest({ message: "Hasn't email or password" });
     }
 
-    const logoutUser = await UserModel.login({ email, password });
+    const logoutUser = await UserSchema.login({ email, password });
 
     if (!logoutUser) {
       throw ApiError.BadRequest({ message: "Hasn't such user" });
@@ -60,7 +60,7 @@ class UserService {
 
     // Тут ищем есть ли уже токены у этого пользователя? Если есть, удаляем из списка токенов, делаем новые и отправляем ему
 
-    const user = await UserModel.findOne({ email });
+    const user = await UserSchema.findOne({ email });
     const tokens = await TokenService.generateTokens(user);
     const { _id: userId, email: userEmail, isActivated: userActivated } = user || {};
     return { ...tokens, user: { userId, email: userEmail, isActivated: userActivated } };
@@ -91,12 +91,12 @@ class UserService {
       throw ApiError.BadRequest({ message: `User already exit or not exist` });
     }
 
-    const user = await UserModel.findOne({ id: token.sub });
+    const user = await UserSchema.findOne({ id: token.sub });
     return await TokenService.generateTokens(user);
   }
 
   async list() {
-    const users = await UserModel.find();
+    const users = await UserSchema.find();
     return [...users];
   }
 }

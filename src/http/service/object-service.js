@@ -1,13 +1,13 @@
-import { ObjectModel } from '../../models/object/object-model.js';
+import { ObjectSchema } from '../../schemas/object/object-schema.js';
 import { ApiError } from '../errors/api-error.js';
 
 class ObjectService {
-  async create({ name, lat, lon, country, region }) {
+  async create({ name, lat, lon, country, region, city, street, building, room, description }) {
     if (!name || !lat || !lon || !country || !region) {
       throw ApiError.BadRequest({ message: 'Has not required fields: name, lat, lon, country or region' });
     }
 
-    const object = new ObjectModel({ name, lat, lon, country, region });
+    const object = new ObjectSchema({ name, lat, lon, country, region, city, street, building, room, description });
 
     await object.save();
     return object;
@@ -18,7 +18,7 @@ class ObjectService {
       throw ApiError.BadRequest({ message: 'Need id for return object' });
     }
 
-    const findSuchObject = await ObjectModel.findById(id);
+    const findSuchObject = await ObjectSchema.findById(id).populate('numSDSs');
 
     if (!findSuchObject) {
       throw ApiError.BadRequest({ message: 'Has not such object' });
@@ -27,12 +27,20 @@ class ObjectService {
     return findSuchObject;
   }
 
-  async update(objectData) {
-    if (!objectData.name || !objectData.lat || !objectData.lon || !objectData.country || !objectData.region) {
+  async update(id, { name, lat, lon, country, region, city, street, building, room, description }) {
+    if (!id) {
+      throw ApiError.BadRequest({ message: 'Has not object id for update' });
+    }
+
+    if (!name || !lat || !lon || !country || !region) {
       throw ApiError.BadRequest({ message: 'Has not required fields: name, lat, lon, country or region' });
     }
 
-    const updatedObject = await ObjectModel.findByIdAndUpdate(objectData.id, objectData, { new: true });
+    const updatedObject = await ObjectSchema.findByIdAndUpdate(
+      id,
+      { name, lat, lon, country, region, city, street, building, room, description },
+      { new: true },
+    );
 
     if (!updatedObject) {
       throw ApiError.BadRequest({ message: 'Has not such object' });
@@ -46,7 +54,7 @@ class ObjectService {
       throw ApiError.BadRequest({ message: 'Need id for delete object' });
     }
 
-    const deletedObject = await ObjectModel.findByIdAndDelete(id);
+    const deletedObject = await ObjectSchema.findByIdAndDelete(id);
 
     if (!deletedObject) {
       throw ApiError.BadRequest({ message: 'Has not such object' });
@@ -56,7 +64,7 @@ class ObjectService {
   }
 
   async list() {
-    const objects = await ObjectModel.find();
+    const objects = await ObjectSchema.find();
     return [...objects];
   }
 }

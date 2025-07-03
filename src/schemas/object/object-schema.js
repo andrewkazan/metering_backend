@@ -26,8 +26,17 @@ const schema = new mongoose.Schema({
   building: String,
   room: String,
   description: String,
-  numDevices: Number,
   lastUpdate: String,
 });
 
-export const ObjectModel = mongoose.model('Object', schema);
+schema.virtual('numSDSs', {
+  ref: 'SDS',
+  localField: '_id',
+  foreignField: 'object',
+  count: true,
+});
+
+schema.set('toObject', { virtuals: true });
+schema.set('toJSON', { virtuals: true });
+
+export const ObjectSchema = mongoose.model('Object', schema);

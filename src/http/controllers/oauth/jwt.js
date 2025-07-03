@@ -1,7 +1,7 @@
 import passport from 'koa-passport';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import config from 'config';
-import { TokenModel } from '../../../models/token/token-model.js';
+import { TokenSchema } from '../../../schemas/token/token-schema.js';
 
 const TOKEN_SECRET = config.get('auth.jwt.secret');
 
@@ -14,7 +14,7 @@ export const instanceOfJWTStrategy = new JwtStrategy(opts, async function (userD
   // sub = userID
   const { sub } = userData;
 
-  const findUserByToken = await TokenModel.findOne({ sub });
+  const findUserByToken = await TokenSchema.findOne({ sub });
 
   if (findUserByToken) {
     return done(null, findUserByToken);

@@ -20,19 +20,19 @@ router.get('/test', TestController.test);
 router.get('/users', jwtPassport, UserController.list);
 // objects
 router.post('/objects', jwtPassport, ObjectController.create);
-router.get('/objects:id', jwtPassport, ObjectController.read);
-router.put('/objects', jwtPassport, ObjectController.update);
-router.delete('/objects:id', jwtPassport, ObjectController.delete);
+router.get('/objects/:id', jwtPassport, ObjectController.read);
+router.put('/objects/:id', jwtPassport, ObjectController.update);
+router.delete('/objects/:id', jwtPassport, ObjectController.delete);
 router.get('/objects', jwtPassport, ObjectController.list);
 // serial device server (SDS)
 router.post('/sdss', jwtPassport, SDSController.create);
-router.get('/sdss:id', jwtPassport, SDSController.read);
+router.get('/sdss/:id', jwtPassport, SDSController.read);
 router.put('/sdss', jwtPassport, SDSController.update);
-router.delete('/sdss:id', jwtPassport, SDSController.delete);
+router.delete('/sdss/:id', jwtPassport, SDSController.delete);
 router.get('/sdss', jwtPassport, SDSController.list);
 // devices
 router.post('/devices', jwtPassport, DeviceController.create);
-router.get('/devices:id', jwtPassport, DeviceController.read);
+router.get('/devices/:id', jwtPassport, DeviceController.read);
 router.put('/devices', jwtPassport, DeviceController.update);
-router.delete('/devices:id', jwtPassport, DeviceController.delete);
+router.delete('/devices/:id', jwtPassport, DeviceController.delete);
 router.get('/devices', jwtPassport, DeviceController.list);

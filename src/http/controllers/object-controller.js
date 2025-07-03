@@ -3,7 +3,7 @@ import { ApiError } from '../errors/api-error.js';
 
 class ObjectController {
   async create(ctx) {
-    const { objectData } = ctx.request.body;
+    const objectData = ctx.request.body;
     const object = await ObjectService.create(objectData);
     ctx.status = 201;
     ctx.body = { object, message: 'object was created' };
@@ -17,8 +17,9 @@ class ObjectController {
   }
 
   async update(ctx) {
-    const { objectData } = ctx.request.body;
-    const object = await ObjectService.update(objectData);
+    const { id } = ctx.params;
+    const objectData = ctx.request.body;
+    const object = await ObjectService.update(id, objectData);
     ctx.status = 201;
     ctx.body = { object, message: 'object was updated' };
   }
