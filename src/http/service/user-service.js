@@ -91,7 +91,7 @@ class UserService {
       throw ApiError.BadRequest({ message: `User already exit or not exist` });
     }
 
-    const user = await UserSchema.findOne({ id: token.sub });
+    const user = await UserSchema.findOne({ id: token.userId });
     return await TokenService.generateTokens(user);
   }
 

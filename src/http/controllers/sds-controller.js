@@ -3,7 +3,7 @@ import { ApiError } from '../errors/api-error.js';
 
 class SDSController {
   async create(ctx) {
-    const { SDSData } = ctx.request.body;
+    const SDSData = ctx.request.body;
     const SDS = await SDSService.create(SDSData);
     ctx.status = 201;
     ctx.body = { SDS, message: 'SDS was created' };
@@ -17,8 +17,9 @@ class SDSController {
   }
 
   async update(ctx) {
-    const { SDSData } = ctx.request.body;
-    const SDS = await SDSService.update(SDSData);
+    const { id } = ctx.params;
+    const SDSData = ctx.request.body;
+    const SDS = await SDSService.update(id, SDSData);
     ctx.status = 201;
     ctx.body = { SDS, message: 'SDS was updated' };
   }

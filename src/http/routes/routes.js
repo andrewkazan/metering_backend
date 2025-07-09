@@ -27,7 +27,7 @@ router.get('/objects', jwtPassport, ObjectController.list);
 // serial device server (SDS)
 router.post('/sdss', jwtPassport, SDSController.create);
 router.get('/sdss/:id', jwtPassport, SDSController.read);
-router.put('/sdss', jwtPassport, SDSController.update);
+router.put('/sdss/:id', jwtPassport, SDSController.update);
 router.delete('/sdss/:id', jwtPassport, SDSController.delete);
 router.get('/sdss', jwtPassport, SDSController.list);
 // devices

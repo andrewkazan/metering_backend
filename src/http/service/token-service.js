@@ -10,12 +10,12 @@ const REFRESH_TOKEN_EXPIRE_IN = config.get('auth.jwt.refreshTokenExpires');
 
 class TokenService {
   async generateTokens(user) {
-    const accessToken = jwt.sign({ sub: user.id }, TOKEN_SECRET, {
+    const accessToken = jwt.sign({ userId: user.id }, TOKEN_SECRET, {
       algorithm: TOKEN_ALGORITHM,
       expiresIn: ACCESS_TOKEN_EXPIRE_IN,
     });
 
-    const refreshToken = jwt.sign({ sub: user.id }, TOKEN_SECRET, {
+    const refreshToken = jwt.sign({ userId: user.id }, TOKEN_SECRET, {
       algorithm: TOKEN_ALGORITHM,
       expiresIn: REFRESH_TOKEN_EXPIRE_IN,
     });
@@ -23,8 +23,9 @@ class TokenService {
     await TokenSchema.create({
       accessToken,
       refreshToken,
-      sub: user.id,
+      userId: user.id,
       userEmail: user.email,
+      refreshTokenTs: new Date(Date.now() + Number.parseInt(REFRESH_TOKEN_EXPIRE_IN) * 60 * 1000),
     });
 
     return { accessToken, refreshToken };
@@ -34,7 +35,7 @@ class TokenService {
     const token = await TokenSchema.findOne({ accessToken, refreshToken }).exec();
 
     if (token) {
-      const user = await UserSchema.findById(token.sub);
+      const user = await UserSchema.findById(token.userId);
       const [accessToken, refreshToken] = await this.generateTokens(user);
       return [accessToken, refreshToken];
     } else {

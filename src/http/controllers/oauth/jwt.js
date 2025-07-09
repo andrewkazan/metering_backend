@@ -11,10 +11,9 @@ const opts = {
 };
 
 export const instanceOfJWTStrategy = new JwtStrategy(opts, async function (userData, done) {
-  // sub = userID
-  const { sub } = userData;
+  const { userId } = userData;
 
-  const findUserByToken = await TokenSchema.findOne({ sub });
+  const findUserByToken = await TokenSchema.findOne({ userId });
 
   if (findUserByToken) {
     return done(null, findUserByToken);

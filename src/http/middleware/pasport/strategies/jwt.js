@@ -11,7 +11,7 @@ const jwtStrategy = new Strategy(
   },
   async (payload, done) => {
     try {
-      const user = await UserSchema.findById(payload.sub);
+      const user = await UserSchema.findById(payload.userId);
 
       if (!user) {
         return done(null, false, { message: 'Unauthorized' });

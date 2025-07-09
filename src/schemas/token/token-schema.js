@@ -1,8 +1,4 @@
-import config from 'config';
 import mongoose from 'mongoose';
-
-const ACCESS_TOKEN_EXPIRE = config.get('auth.jwt.accessTokenExpires');
-const REFRESH_TOKEN_EXPIRE = config.get('auth.jwt.refreshTokenExpires');
 
 const schema = new mongoose.Schema({
   accessToken: {
@@ -13,16 +9,19 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  sub: String,
-  ts: {
+  userId: String,
+  refreshTokenTs: {
     type: Date,
-    default: new Date(),
+    required: true,
   },
-  userEmail: String,
+  userEmail: {
+    type: String,
+    required: true,
+  },
 });
 
-schema.index({ accessToken: 1, refreshToken: 2 });
-schema.index({ ts: 1 }, { expires: ACCESS_TOKEN_EXPIRE });
-schema.index({ ts: 2 }, { expires: REFRESH_TOKEN_EXPIRE });
+// TTL-индекс по refreshTokenTs — запись удалится ровно в тот момент, когда refreshTokenTs станет меньше текущей даты
+// Параметр expires: 0 означает, что MongoDB удалит документы сразу после наступления времени, указанного в refreshTokenTs
+schema.index({ refreshTokenTs: 1 }, { expires: 0 });
 
 export const TokenSchema = mongoose.model('Token', schema);

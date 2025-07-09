@@ -5,7 +5,7 @@ const schema = new mongoose.Schema({
   model: { type: String, required: true },
   IMEI: { type: String, required: true },
   comment: { type: String, required: true },
-  sds: { type: mongoose.Schema.Types.ObjectId, ref: 'SDS', required: true },
+  sdsId: { type: mongoose.Schema.Types.ObjectId, ref: 'sds', required: true },
   status: Boolean,
 });
 

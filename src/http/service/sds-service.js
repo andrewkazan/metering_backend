@@ -2,12 +2,12 @@ import { SdsSchema } from '../../schemas/sds/sds-schema.js';
 import { ApiError } from '../errors/api-error.js';
 
 class SDSService {
-  async create({ name, model, phone, comment }) {
-    if (!name || !model || !model || !phone || !comment) {
-      throw ApiError.BadRequest({ message: 'Has not required fields: name, model, phone or comment' });
+  async create({ name, model, phone, comment, objectId }) {
+    if (!name || !model || !phone || !comment || !objectId) {
+      throw ApiError.BadRequest({ message: 'Has not required fields: name, model, phone, comment or objectId' });
     }
 
-    const SDS = new SdsSchema({ name, model, phone, comment });
+    const SDS = new SdsSchema({ name, model, phone, comment, objectId });
 
     await SDS.save();
     return SDS;
@@ -18,7 +18,7 @@ class SDSService {
       throw ApiError.BadRequest({ message: 'Need id for return SDS' });
     }
 
-    const findSuchSDS = await SdsSchema.findById(id).populate('numSDSs');
+    const findSuchSDS = await SdsSchema.findById(id).populate('numDevices');
 
     if (!findSuchSDS) {
       throw ApiError.BadRequest({ message: 'Has not such SDS' });
@@ -27,12 +27,16 @@ class SDSService {
     return findSuchSDS;
   }
 
-  async update(SDSData) {
-    if (!SDSData.name || !SDSData.model || !SDSData.model || !SDSData.phone || !SDSData.comment) {
-      throw ApiError.BadRequest({ message: 'Has not required fields: name, model, phone or comment' });
+  async update(id, { name, model, phone, comment, objectId }) {
+    if (!name || !model || !phone || !comment || !objectId) {
+      throw ApiError.BadRequest({ message: 'Has not required fields: name, model, phone, comment or objectId' });
     }
 
-    const updatedSDS = await SdsSchema.findByIdAndUpdate(SDSData.id, SDSData, { new: true });
+    if (!id) {
+      throw ApiError.BadRequest({ message: 'Has not SDSs id for update' });
+    }
+
+    const updatedSDS = await SdsSchema.findByIdAndUpdate(id, { name, model, phone, comment, objectId }, { new: true });
 
     if (!updatedSDS) {
       throw ApiError.BadRequest({ message: 'Has not such SDS' });
