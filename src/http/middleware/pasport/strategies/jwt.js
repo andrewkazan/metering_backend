@@ -1,6 +1,6 @@
 import config from 'config';
 import { Strategy, ExtractJwt } from 'passport-jwt';
-import { UserModel } from '../../../../models/user/user-model.js';
+import { UserSchema } from '../../../../schemas/user/user-schema.js';
 
 const AUTH_JWT_SECRET = config.get('auth.jwt.secret');
 
@@ -11,7 +11,7 @@ const jwtStrategy = new Strategy(
   },
   async (payload, done) => {
     try {
-      const user = await UserModel.findById(payload.sub);
+      const user = await UserSchema.findById(payload.userId);
 
       if (!user) {
         return done(null, false, { message: 'Unauthorized' });
