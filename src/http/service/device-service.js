@@ -1,13 +1,14 @@
+import mongoose from 'mongoose';
 import { DeviceSchema } from '../../schemas/device/device-schema.js';
 import { ApiError } from '../errors/api-error.js';
 
 class DeviceService {
-  async create({ name, model, IMEI, kind, comment }) {
-    if (!name || !model || !IMEI || !kind || !comment) {
-      throw ApiError.BadRequest({ message: 'Has not required fields: name, model, IMEI, kind or comment' });
+  async create({ name, model, IMEI, comment, sdsId }) {
+    if (!name || !model || !IMEI || !comment || !sdsId) {
+      throw ApiError.BadRequest({ message: 'Has not required fields: name, model, IMEI, sdsId or comment' });
     }
 
-    const device = new DeviceSchema({ name, model, IMEI, kind, comment });
+    const device = new DeviceSchema({ name, model, IMEI, comment, sdsId });
 
     await device.save();
     return device;
@@ -18,21 +19,41 @@ class DeviceService {
       throw ApiError.BadRequest({ message: 'Need id for return device' });
     }
 
+    const isValidId = mongoose.Types.ObjectId.isValid(id);
+
+    if (!isValidId) {
+      throw ApiError.BadRequest({ message: "It's not a valid Device id" });
+    }
+
     const findSuchDevice = await DeviceSchema.findById(id);
 
     if (!findSuchDevice) {
-      throw ApiError.BadRequest({ message: 'Has not such object' });
+      throw ApiError.BadRequest({ message: 'Has not such device' });
     }
 
     return findSuchDevice;
   }
 
-  async update(deviceData) {
-    if (!deviceData.name || !deviceData.model || !deviceData.IMEI || !deviceData.kind || !deviceData.comment) {
-      throw ApiError.BadRequest({ message: 'Has not required fields: name, model, IMEI, kind or comment' });
+  async update(id, { name, model, IMEI, comment, sdsId }) {
+    if (!id) {
+      throw ApiError.BadRequest({ message: 'Need id for return device' });
     }
 
-    const updatedDevice = await DeviceSchema.findByIdAndUpdate(deviceData.id, deviceData, { new: true });
+    if (!name || !model || !IMEI || !comment || !sdsId) {
+      throw ApiError.BadRequest({ message: 'Has not required fields: name, model, IMEI, sdsId or comment' });
+    }
+
+    const isValidId = mongoose.Types.ObjectId.isValid(id);
+
+    if (!isValidId) {
+      throw ApiError.BadRequest({ message: "It's not a valid Device id" });
+    }
+
+    const updatedDevice = await DeviceSchema.findByIdAndUpdate(
+      id,
+      { name, model, IMEI, comment, sdsId },
+      { new: true },
+    );
 
     if (!updatedDevice) {
       throw ApiError.BadRequest({ message: 'Has not such device' });
@@ -44,6 +65,12 @@ class DeviceService {
   async delete(id) {
     if (!id) {
       throw ApiError.BadRequest({ message: 'Need id for delete device' });
+    }
+
+    const isValidId = mongoose.Types.ObjectId.isValid(id);
+
+    if (!isValidId) {
+      throw ApiError.BadRequest({ message: "It's not a valid Device id" });
     }
 
     const deletedDevice = await DeviceSchema.findByIdAndDelete(id);

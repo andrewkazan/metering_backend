@@ -6,7 +6,10 @@ const schema = new mongoose.Schema({
   IMEI: { type: String, required: true },
   comment: { type: String, required: true },
   sdsId: { type: mongoose.Schema.Types.ObjectId, ref: 'sds', required: true },
-  status: Boolean,
+  status: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export const DeviceSchema = mongoose.model('Device', schema);

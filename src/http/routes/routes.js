@@ -33,6 +33,6 @@ router.get('/sdss', jwtPassport, SDSController.list);
 // devices
 router.post('/devices', jwtPassport, DeviceController.create);
 router.get('/devices/:id', jwtPassport, DeviceController.read);
-router.put('/devices', jwtPassport, DeviceController.update);
+router.put('/devices/:id', jwtPassport, DeviceController.update);
 router.delete('/devices/:id', jwtPassport, DeviceController.delete);
 router.get('/devices', jwtPassport, DeviceController.list);

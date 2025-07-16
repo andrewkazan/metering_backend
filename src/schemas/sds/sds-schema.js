@@ -8,7 +8,10 @@ const schema = new mongoose.Schema({
   phone: { type: String, required: true },
   comment: { type: String, required: true },
   objectId: { type: mongoose.Schema.Types.ObjectId, ref: 'object', required: true },
-  status: Boolean,
+  status: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 schema.virtual('numDevices', {

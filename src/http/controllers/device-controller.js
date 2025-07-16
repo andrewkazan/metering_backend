@@ -3,7 +3,7 @@ import { ApiError } from '../errors/api-error.js';
 
 class DeviceController {
   async create(ctx) {
-    const { deviceData } = ctx.request.body;
+    const deviceData = ctx.request.body;
     const device = await DeviceService.create(deviceData);
     ctx.status = 201;
     ctx.body = { device, message: 'device was created' };
@@ -17,8 +17,9 @@ class DeviceController {
   }
 
   async update(ctx) {
-    const { deviceData } = ctx.request.body;
-    const device = await DeviceService.update(deviceData);
+    const { id } = ctx.params;
+    const deviceData = ctx.request.body;
+    const device = await DeviceService.update(id, deviceData);
     ctx.status = 201;
     ctx.body = { device, message: 'device was updated' };
   }
