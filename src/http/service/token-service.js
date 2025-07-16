@@ -25,7 +25,7 @@ class TokenService {
       refreshToken,
       userId: user.id,
       userEmail: user.email,
-      refreshTokenTs: new Date(Date.now() + Number.parseInt(REFRESH_TOKEN_EXPIRE_IN) * 60 * 1000),
+      expiresAt: new Date(Date.now() + Number.parseInt(REFRESH_TOKEN_EXPIRE_IN) * 60 * 1000),
     });
 
     return { accessToken, refreshToken };
