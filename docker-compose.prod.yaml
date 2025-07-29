@@ -12,30 +12,30 @@ services:
     command: [ --auth ]
 
   backend:
-      build:
-          context: .
-          dockerfile: dockerfile.prod
-      container_name: backend-metering
-      environment:
-          - NODE_ENV=production
-          - MONGO_URL=mongodb://root:pass12345@mongodb:27017
-      # Без volumes
-      depends_on:
-        - mongodb
-      restart: on-failure:3
-      ports:
-        - '3001:3001'
+    build:
+        context: .
+        dockerfile: dockerfile.prod
+    container_name: backend-metering
+    environment:
+        - NODE_ENV=production
+        - MONGO_URL=mongodb://root:pass12345@mongodb:27017
+    # Без volumes
+    depends_on:
+      - mongodb
+    restart: on-failure:3
+    ports:
+      - '3001:3001'
 
   wrx_server:
-      build:
-        context: ./metering_tcp_wrx_server
-        dockerfile: dockerfile.prod
-      container_name: wrx_server
-      environment:
-        - NODE_ENV=production
-      volumes:
-        - ./metering_tcp_wrx_server:/app
-      restart: on-failure:3
-      ports:
-        - '4000:4000'
-      command: ["npm", "start"]
+    build:
+      context: ../metering_tcp_wrx_server
+      dockerfile: dockerfile.prod
+    container_name: wrx_server
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ../metering_tcp_wrx_server:/app
+    restart: on-failure:3
+    ports:
+      - '4000:4000'
+    command: ["npm", "start"]
