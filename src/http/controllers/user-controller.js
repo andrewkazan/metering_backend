@@ -1,5 +1,4 @@
 import { UserService } from '../service/user-service.js';
-import { ApiError } from '../errors/api-error.js';
 import config from 'config';
 
 const APP_URL = config.get('app.clientURL');
@@ -40,10 +39,6 @@ class UserController {
   }
 
   async list(ctx) {
-    if (!ctx.isAuthenticated()) {
-      throw ApiError.Unauthorized();
-    }
-
     const users = await UserService.list();
     ctx.status = 200;
     ctx.body = users;
