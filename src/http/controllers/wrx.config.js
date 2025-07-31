@@ -3,7 +3,7 @@ const wrxCommands = {
   dateTime: '02A784FA21BC25',
   limitPower: '02A784FA22FC24',
   limitEnergy: '02A784FA233DE4',
-  WinterSummerFlag: '02A784FA247C26',
+  winterSummerFlag: '02A784FA247C26',
   correctionByButtons: '02A784FA25BDE6',
   powerReading: '02A784FA26FDE7',
   valueOfEnergy: '02A784FA273C27',
