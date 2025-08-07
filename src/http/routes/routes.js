@@ -6,6 +6,7 @@ import { SDSController } from '../controllers/sds-controller.js';
 import { DeviceController } from '../controllers/device-controller.js';
 import { jwtPassport } from '../controllers/oauth/jwt.js';
 import { WrxController } from '../controllers/wrx-controller/wrx-controller.js';
+import { WrxMercury206Controller } from '../controllers/wrx-controller/wrx-mercury-206-controller.js';
 
 export const router = new Router({ prefix: '/api' });
 
@@ -41,4 +42,15 @@ router.get('/devices', jwtPassport, DeviceController.list);
 router.get('/wrx/test', jwtPassport, WrxController.test.bind(WrxController));
 router.get('/wrx/list', jwtPassport, WrxController.list.bind(WrxController));
 router.get('/wrx/info', jwtPassport, WrxController.info.bind(WrxController));
-router.get('/wrx/info', jwtPassport, WrxController.sendCommand.bind(WrxController));
+router.post('/wrx/command', jwtPassport, WrxController.sendCommand.bind(WrxController));
+// wrx mercury 206
+router.post('/wrx/dateTime', jwtPassport, WrxMercury206Controller.getDateTime.bind(WrxMercury206Controller));
+router.post('/wrx/limitPower', jwtPassport, WrxMercury206Controller.getLimitPower.bind(WrxMercury206Controller));
+router.post('/wrx/limitEnergy', jwtPassport, WrxMercury206Controller.getLimitEnergy.bind(WrxMercury206Controller));
+router.post('/wrx/powerReading', jwtPassport, WrxMercury206Controller.getPowerReading.bind(WrxMercury206Controller));
+router.post('/wrx/valueOfEnergy', jwtPassport, WrxMercury206Controller.getValueOfEnergy.bind(WrxMercury206Controller));
+router.post(
+  '/wrx/batteryVoltage',
+  jwtPassport,
+  WrxMercury206Controller.getBatteryVoltage.bind(WrxMercury206Controller),
+);

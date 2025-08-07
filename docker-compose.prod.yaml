@@ -38,4 +38,5 @@ services:
     restart: on-failure:3
     ports:
       - '4000:4000'
+      - '4001:4001'
     command: ["npm", "start"]

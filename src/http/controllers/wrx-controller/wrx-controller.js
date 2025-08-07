@@ -2,15 +2,17 @@ import { ApiError } from '../../errors/api-error.js';
 
 class WrxController {
   async handleRequest(ctx, next, url, sendData) {
-    const options = {
+    let options = {
       method: 'GET',
       headers: {},
     };
 
     if (sendData) {
-      options.headers = {
+      options = {
         method: 'POST',
-        'Content-Type': 'application/json',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(sendData),
       };
     }
@@ -32,7 +34,7 @@ class WrxController {
   }
 
   async test(ctx, next) {
-    return this.handleRequest(ctx, next, 'http://wrx_server:4000/test');
+    return this.handleRequest(ctx, next, 'http://wrx_server:4000/uspd/test');
   }
 
   async list(ctx, next) {

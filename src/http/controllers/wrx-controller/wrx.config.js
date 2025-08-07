@@ -1,4 +1,4 @@
-const wrxCommands = {
+export const wrxCommands = {
   tariffValue: '02A784FA273C27',
   dateTime: '02A784FA21BC25',
   limitPower: '02A784FA22FC24',
