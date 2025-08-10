@@ -1,7 +1,7 @@
 import { ApiError } from '../../errors/api-error.js';
 
 class WrxController {
-  async handleRequest(ctx, next, url, sendData) {
+  async handleRequest({ ctx, next, url, sendData, formatResponse }) {
     let options = {
       method: 'GET',
       headers: {},
@@ -11,7 +11,7 @@ class WrxController {
       options = {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-type': 'application/json',
         },
         body: JSON.stringify(sendData),
       };
@@ -20,10 +20,11 @@ class WrxController {
     try {
       const response = await fetch(url, options);
       const data = await response.json();
+      const formatedData = formatResponse ? formatResponse(data) : data;
 
-      if (data) {
+      if (formatedData) {
         ctx.status = 200;
-        ctx.body = data;
+        ctx.body = formatedData;
       } else {
         ctx.status = 404;
         ctx.body = { message: 'Wrx server is not available' };
@@ -33,26 +34,32 @@ class WrxController {
     }
   }
 
-  async test(ctx, next) {
-    return this.handleRequest(ctx, next, 'http://wrx_server:4000/uspd/test');
+  test(ctx, next) {
+    return this.handleRequest({ ctx, next, url: 'http://wrx_server:4000/uspd/test' });
   }
 
-  async list(ctx, next) {
-    return this.handleRequest(ctx, next, 'http://wrx_server:4000/uspd/list');
+  list(ctx, next) {
+    return this.handleRequest({ ctx, next, url: 'http://wrx_server:4000/uspd/list' });
   }
 
-  async info(ctx, next) {
-    return this.handleRequest(ctx, next, 'http://wrx_server:4000/uspd/info');
+  info(ctx, next) {
+    return this.handleRequest({ ctx, next, url: 'http://wrx_server:4000/uspd/info' });
   }
 
-  async sendCommand(ctx, next) {
+  sendCommand({ ctx, next, formatResponse }) {
     const { request: { body: { IMEI, command } } = {} } = ctx;
 
     if (!IMEI || !command) {
       throw ApiError.BadRequest({ message: 'Has not IMEI or command' });
     }
 
-    return this.handleRequest(ctx, next, 'http://wrx_server:4000/sendCommand', { IMEI, command });
+    return this.handleRequest({
+      ctx,
+      next,
+      url: 'http://wrx_server:4000/sendCommand',
+      sendData: { IMEI, command },
+      formatResponse,
+    });
   }
 }
 

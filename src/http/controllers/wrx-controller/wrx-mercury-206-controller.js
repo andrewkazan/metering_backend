@@ -1,34 +1,35 @@
 import { ApiError } from '../../errors/api-error.js';
 import { wrxCommands } from './wrx.config.js';
 import { WrxController } from './wrx-controller.js';
+import * as Utils from './wrx.utils.js';
 
 class WrxMercury206Controller {
-  async handelRequest(ctx, next) {
+  handelRequest({ ctx, next, formatResponse }) {
     const { request: { body: { IMEI } } = {} } = ctx;
 
     if (!IMEI) {
       throw ApiError.BadRequest({ message: 'Has not IMEI for use' });
     }
 
-    return WrxController.sendCommand.bind(WrxController)(ctx, next, 'http://wrx_server:4000/sendCommand');
+    return WrxController.sendCommand.bind(WrxController)({ ctx, next, formatResponse });
   }
 
-  async getDateTime(ctx, next) {
+  getDateTime(ctx, next) {
     ctx.request.body = {
       ...ctx.request.body,
       command: wrxCommands['dateTime'],
     };
 
-    return this.handelRequest(ctx, next);
+    return this.handelRequest({ ctx, next, formatResponse: Utils.parseDateTime });
   }
 
-  async getLimitPower() {
+  getLimitPower(ctx, next) {
     ctx.request.body = {
       ...ctx.request.body,
       command: wrxCommands['limitPower'],
     };
 
-    return this.handelRequest(ctx, next);
+    this.handelRequest({ ctx, next });
   }
 
   async getLimitEnergy(ctx, next) {
@@ -37,7 +38,7 @@ class WrxMercury206Controller {
       command: wrxCommands['limitEnergy'],
     };
 
-    return this.handelRequest(ctx, next);
+    this.handelRequest({ ctx, next });
   }
 
   async getPowerReading(ctx, next) {
@@ -46,7 +47,7 @@ class WrxMercury206Controller {
       command: wrxCommands['powerReading'],
     };
 
-    return this.handelRequest(ctx, next);
+    this.handelRequest({ ctx, next });
   }
 
   async getValueOfEnergy(ctx, next) {
@@ -55,7 +56,7 @@ class WrxMercury206Controller {
       command: wrxCommands['valueOfEnergy'],
     };
 
-    return this.handelRequest(ctx, next);
+    this.handelRequest({ ctx, next });
   }
 
   async getBatteryVoltage(ctx, next) {
@@ -64,7 +65,7 @@ class WrxMercury206Controller {
       command: wrxCommands['batteryVoltage'],
     };
 
-    return this.handelRequest(ctx, next);
+    this.handelRequest({ ctx, next });
   }
 }
 
