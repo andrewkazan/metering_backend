@@ -54,3 +54,8 @@ router.post(
   jwtPassport,
   WrxMercury206Controller.getBatteryVoltage.bind(WrxMercury206Controller),
 );
+router.post(
+  '/wrx/powerNetParameters',
+  jwtPassport,
+  WrxMercury206Controller.getPowerNetParameters.bind(WrxMercury206Controller),
+);

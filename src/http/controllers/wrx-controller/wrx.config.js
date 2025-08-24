@@ -1,4 +1,4 @@
-export const wrxCommands = {
+export const mercury206Commands = {
   tariffValue: '02A784FA273C27',
   dateTime: '02A784FA21BC25',
   limitPower: '02A784FA22FC24',
@@ -14,7 +14,17 @@ export const wrxCommands = {
   lastActivation: '02A784FA2C7DE0',
   impulseOutputReading: '02A784FA2DBC20',
   tariffSchedule: '02A784FA31BDE9',
-  powerGridParameters: '02A784FA633C14',
+  powerNetParameters: '02A784FA633C14',
   officialInformation: '02A784FA65BC16',
   manufactureDate: '02A784FA66FC17',
+};
+
+export const resultDefault = {
+  dateTime: null,
+  limitPower: null,
+  limitEnergy: null,
+  powerReading: null,
+  valueOfEnergy: null,
+  batteryVoltage: null,
+  powerNetParameters: null,
 };

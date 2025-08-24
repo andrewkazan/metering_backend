@@ -1,4 +1,5 @@
 import { ApiError } from '../../errors/api-error.js';
+import { isKoaContext } from '../../../utils/is-koa-ctx.js';
 
 class WrxController {
   async handleRequest({ ctx, next, url, sendData, formatResponse }) {
@@ -22,15 +23,23 @@ class WrxController {
       const data = await response.json();
       const formatedData = formatResponse ? formatResponse(data) : data;
 
-      if (formatedData) {
-        ctx.status = 200;
-        ctx.body = formatedData;
+      if (isKoaContext(ctx)) {
+        if (formatedData) {
+          ctx.status = 200;
+          ctx.body = formatedData;
+        } else {
+          ctx.status = 404;
+          ctx.body = { message: 'Wrx server is not available' };
+        }
       } else {
-        ctx.status = 404;
-        ctx.body = { message: 'Wrx server is not available' };
+        if (formatedData) {
+          return formatedData;
+        } else {
+          return null;
+        }
       }
     } catch (e) {
-      next(e);
+      next();
     }
   }
 
