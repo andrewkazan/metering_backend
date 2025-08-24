@@ -20,11 +20,11 @@ export const mercury206Commands = {
 };
 
 export const resultDefault = {
-  dateTime: null,
-  limitPower: null,
-  limitEnergy: null,
-  powerReading: null,
-  valueOfEnergy: null,
-  batteryVoltage: null,
-  powerNetParameters: null,
+  dateTime: { data: null, error: null },
+  limitPower: { data: null, error: null },
+  limitEnergy: { data: null, error: null },
+  powerReading: { data: null, error: null },
+  valueOfEnergy: { data: null, error: null },
+  batteryVoltage: { data: null, error: null },
+  powerNetParameters: { data: null, error: null },
 };

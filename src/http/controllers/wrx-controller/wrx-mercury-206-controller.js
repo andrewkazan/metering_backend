@@ -8,12 +8,25 @@ import { awaiter } from '../../../utils/awaiter.js';
 
 const MERCURY_206_RN_IMEI = config.get('mercuryMeter.206RNIMEI');
 const WAIT_METERING_TIME = 60 * 1000;
+const POLLING_GAP = 10 * 60 * 1000;
 
 class WrxMercury206Controller {
-  constructor() {
-    setTimeout(() => {
-      // this.complexRequestMercury206();
-    }, 1000);
+  pollingInterval;
+
+  constructor() {}
+
+  handlePolling(ctx) {
+    const pollingFlag = ctx.request?.body?.pollingFlag;
+
+    if (pollingFlag) {
+      this.pollingInterval = setInterval(() => {
+        this.complexRequestMercury206();
+      }, POLLING_GAP);
+    } else {
+      clearInterval(this.pollingInterval);
+    }
+
+    console.log('--- handlePolling - value ---', pollingFlag, 'this.pollingInterval', this.pollingInterval);
   }
 
   handelRequest({ ctx, next, formatResponse }) {
@@ -111,15 +124,18 @@ class WrxMercury206Controller {
     ];
 
     for (const { label, method } of steps) {
-      const resultLocal = await method.call(this, ctx);
-      console.log(new Date(), `Complex request for "${label}", imei: ${MERCURY_206_RN_IMEI}`);
+      try {
+        console.log(new Date(), `Complex request for "${label}" | imei: ${MERCURY_206_RN_IMEI}`);
+        const response = await method.call(this, ctx);
 
-      if (resultLocal) {
-        result[label] = resultLocal;
-        console.log(`Call for "${label}": ok | data: ${result}`);
-      } else {
-        console.log(`Call for "${label}": fail | data: ${result}`);
-        return result;
+        if (response) {
+          const formatData = response.toString('hex').toUpperCase();
+          console.log(new Date(), `Complex request for "${label}": Ok | imei: ${imei} | response: ${formatData}`);
+          result[label].data = formatData;
+        }
+      } catch (e) {
+        console.log(new Date(), `Complex request for "${key}": Fail | imei: ${imei} | response: ${response}`);
+        result[label].error = e.message || String(e);
       }
 
       await awaiter(WAIT_METERING_TIME);

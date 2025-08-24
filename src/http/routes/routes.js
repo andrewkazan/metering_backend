@@ -59,3 +59,9 @@ router.post(
   jwtPassport,
   WrxMercury206Controller.getPowerNetParameters.bind(WrxMercury206Controller),
 );
+router.post(
+  '/wrx/complexRequestMercury206',
+  jwtPassport,
+  WrxMercury206Controller.complexRequestMercury206.bind(WrxMercury206Controller),
+);
+router.post('/wrx/togglePolling', jwtPassport, WrxMercury206Controller.handlePolling.bind(WrxMercury206Controller));
