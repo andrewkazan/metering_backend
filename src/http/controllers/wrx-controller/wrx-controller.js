@@ -24,19 +24,10 @@ class WrxController {
       const formatedData = formatResponse ? formatResponse(data) : data;
 
       if (isKoaContext(ctx)) {
-        if (formatedData) {
-          ctx.status = 200;
-          ctx.body = formatedData;
-        } else {
-          ctx.status = 404;
-          ctx.body = { message: 'Wrx server is not available' };
-        }
+        ctx.status = response.status;
+        ctx.body = formatedData || data;
       } else {
-        if (formatedData) {
-          return formatedData;
-        } else {
-          return null;
-        }
+        return formatedData || data;
       }
     } catch (e) {
       next();

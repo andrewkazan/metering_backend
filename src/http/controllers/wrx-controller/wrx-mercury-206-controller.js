@@ -18,7 +18,11 @@ class WrxMercury206Controller {
   handlePolling(ctx) {
     const pollingFlag = ctx.request?.body?.pollingFlag;
 
+    console.log(new Date(), `Is polling complex request: ${pollingFlag}`);
+
     if (pollingFlag) {
+      // call one time complex request immediately from start
+      this.complexRequestMercury206();
       this.pollingInterval = setInterval(() => {
         this.complexRequestMercury206();
       }, POLLING_GAP);
@@ -26,7 +30,8 @@ class WrxMercury206Controller {
       clearInterval(this.pollingInterval);
     }
 
-    console.log('--- handlePolling - value ---', pollingFlag, 'this.pollingInterval', this.pollingInterval);
+    ctx.status = 200;
+    ctx.body = { setPollingFlag: pollingFlag };
   }
 
   handelRequest({ ctx, next, formatResponse }) {
@@ -57,7 +62,7 @@ class WrxMercury206Controller {
     return this.handelRequest({ ctx, next, formatResponse: Utils.parseLimitsPower });
   }
 
-  async getLimitEnergy(ctx, next) {
+  getLimitEnergy(ctx, next) {
     ctx.request.body = {
       ...ctx.request.body,
       command: mercury206Commands['limitEnergy'],
@@ -66,7 +71,7 @@ class WrxMercury206Controller {
     return this.handelRequest({ ctx, next, formatResponse: Utils.parseLimitEnergy });
   }
 
-  async getPowerReading(ctx, next) {
+  getPowerReading(ctx, next) {
     ctx.request.body = {
       ...ctx.request.body,
       command: mercury206Commands['powerReading'],
@@ -75,7 +80,7 @@ class WrxMercury206Controller {
     return this.handelRequest({ ctx, next, formatResponse: Utils.parsePowerReading });
   }
 
-  async getValueOfEnergy(ctx, next) {
+  getValueOfEnergy(ctx, next) {
     ctx.request.body = {
       ...ctx.request.body,
       command: mercury206Commands['valueOfEnergy'],
@@ -84,7 +89,7 @@ class WrxMercury206Controller {
     return this.handelRequest({ ctx, next, formatResponse: Utils.parseValueOfEnergy });
   }
 
-  async getBatteryVoltage(ctx, next) {
+  getBatteryVoltage(ctx, next) {
     ctx.request.body = {
       ...ctx.request.body,
       command: mercury206Commands['batteryVoltage'],
@@ -93,7 +98,7 @@ class WrxMercury206Controller {
     return this.handelRequest({ ctx, next, formatResponse: Utils.parseBatteryVoltage });
   }
 
-  async getPowerNetParameters(ctx, next) {
+  getPowerNetParameters(ctx, next) {
     ctx.request.body = {
       ...ctx.request.body,
       command: mercury206Commands['powerNetParameters'],
@@ -108,9 +113,10 @@ class WrxMercury206Controller {
 
     // get active sds list
     const wrxList = await WrxController.list.bind(WrxController)({ ctx });
+    const hasTarget = Array.isArray(wrxList) && wrxList.some((wrx) => wrx.IMEI === MERCURY_206_RN_IMEI);
     // if it has not sds list or sds list has not such IMEI, stop
-    if (!Array.isArray(wrxList) || wrxList.some((wrx) => wrx.IMEI !== MERCURY_206_RN_IMEI)) {
-      return;
+    if (!hasTarget) {
+      return result;
     }
 
     const steps = [
@@ -129,12 +135,15 @@ class WrxMercury206Controller {
         const response = await method.call(this, ctx);
 
         if (response) {
-          const formatData = response.toString('hex').toUpperCase();
-          console.log(new Date(), `Complex request for "${label}": Ok | imei: ${imei} | response: ${formatData}`);
-          result[label].data = formatData;
+          if (response.hasOwnProperty('error') && response.error) {
+            result[label].error = response;
+          } else {
+            console.log(new Date(), `Complex answer for "${label}": Ok | imei: ${MERCURY_206_RN_IMEI}`);
+            result[label].data = response;
+          }
         }
       } catch (e) {
-        console.log(new Date(), `Complex request for "${key}": Fail | imei: ${imei} | response: ${response}`);
+        console.log(new Date(), `Complex answer for "${label}": Fail | imei: ${MERCURY_206_RN_IMEI} | error: ${e}`);
         result[label].error = e.message || String(e);
       }
 
