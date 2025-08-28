@@ -129,7 +129,7 @@ class WrxMercury206Controller {
       { label: 'powerNetParameters', method: this.getPowerNetParameters },
     ];
 
-    for (const { label, method } of steps) {
+    for (const [index, { label, method }] of steps.entries()) {
       try {
         console.log(new Date(), `Complex request for "${label}" | imei: ${MERCURY_206_RN_IMEI}`);
         const response = await method.call(this, ctx);
@@ -147,7 +147,9 @@ class WrxMercury206Controller {
         result[label].error = e.message || String(e);
       }
 
-      await awaiter(WAIT_METERING_TIME);
+      if (index < steps.length - 1) {
+        await awaiter(WAIT_METERING_TIME);
+      }
     }
 
     return result;
