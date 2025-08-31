@@ -11,9 +11,9 @@ export function isKoaContext(x) {
     typeof x.assert === 'function' &&
     typeof x.set === 'function' &&
     typeof x.get === 'function' &&
-    x.request.ctx === x &&
-    x.response.ctx === x &&
-    x.request.response === x.response &&
-    x.response.request === x.request
+    x.request?.ctx === x &&
+    x.response?.ctx === x &&
+    x.request?.response === x.response &&
+    x.response?.request === x.request
   );
 }

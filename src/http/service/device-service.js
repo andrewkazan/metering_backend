@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { DeviceSchema } from '../../schemas/device/device-schema.js';
+import { DeviceSchema } from '../../schemas/device-schema.js';
 import { ApiError } from '../errors/api-error.js';
 
 class DeviceService {

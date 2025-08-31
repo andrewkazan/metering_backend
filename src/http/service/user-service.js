@@ -1,4 +1,4 @@
-import { UserSchema } from '../../schemas/user/user-schema.js';
+import { UserSchema } from '../../schemas/user-schema.js';
 import { TokenService } from './token-service.js';
 import { MailService } from './mail-service.js';
 import { ApiError } from '../errors/api-error.js';

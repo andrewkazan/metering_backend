@@ -1,4 +1,4 @@
-import { ObjectSchema } from '../../schemas/object/object-schema.js';
+import { ObjectSchema } from '../../schemas/object-schema.js';
 import { ApiError } from '../errors/api-error.js';
 import mongoose from 'mongoose';
 

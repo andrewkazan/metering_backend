@@ -1,15 +1,15 @@
-import mongoose from 'mongoose';
+import { Schema, model } from 'mongoose';
 
-const schema = new mongoose.Schema({
+const schema = new Schema({
   name: { type: String, required: true },
   model: { type: String, required: true },
   IMEI: { type: String, required: true },
   comment: { type: String, required: true },
-  sdsId: { type: mongoose.Schema.Types.ObjectId, ref: 'sds', required: true },
+  sdsId: { type: Schema.Types.ObjectId, ref: 'sds', required: true },
   status: {
     type: Boolean,
     default: false,
   },
 });
 
-export const DeviceSchema = mongoose.model('Device', schema);
+export const DeviceSchema = model('Device', schema);

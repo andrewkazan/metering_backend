@@ -1,4 +1,4 @@
-import { SdsSchema } from '../../schemas/sds/sds-schema.js';
+import { SdsSchema } from '../../schemas/sds-schema.js';
 import { ApiError } from '../errors/api-error.js';
 import mongoose from 'mongoose';
 

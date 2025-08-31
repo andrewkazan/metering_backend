@@ -5,6 +5,7 @@ import { WrxController } from './wrx-controller.js';
 import * as Utils from './wrx.utils.js';
 import { resultDefault } from './wrx.config.js';
 import { awaiter } from '../../../utils/awaiter.js';
+import { instanceOfMeteringDataService } from '../../service/metering-data-service.js';
 
 const MERCURY_206_RN_IMEI = config.get('mercuryMeter.206RNIMEI');
 const WAIT_METERING_TIME = 60 * 1000;
@@ -15,16 +16,20 @@ class WrxMercury206Controller {
 
   constructor() {}
 
-  handlePolling(ctx) {
+  handlePolling(ctx, next) {
     const pollingFlag = ctx.request?.body?.pollingFlag;
+    ctx.request.body = {
+      ...ctx.request.body,
+      stopSendByHttp: true,
+    };
 
     console.log(new Date(), `Is polling complex request: ${pollingFlag}`);
 
     if (pollingFlag) {
       // call one time complex request immediately from start
-      this.complexRequestMercury206();
+      this.complexRequestMercury206(ctx, next);
       this.pollingInterval = setInterval(() => {
-        this.complexRequestMercury206();
+        this.complexRequestMercury206(ctx, next);
       }, POLLING_GAP);
     } else {
       clearInterval(this.pollingInterval);
@@ -107,9 +112,16 @@ class WrxMercury206Controller {
     return this.handelRequest({ ctx, next, formatResponse: Utils.parsePowerNetParameters });
   }
 
-  async complexRequestMercury206() {
-    const ctx = { request: { body: { IMEI: MERCURY_206_RN_IMEI } } };
+  async complexRequestMercury206(ctx, next) {
+    ctx.request.body = {
+      ...ctx.request.body,
+      IMEI: MERCURY_206_RN_IMEI,
+    };
+    // will not send response result from methods by http
+    const fakeCtx = { request: { body: { IMEI: MERCURY_206_RN_IMEI } } };
     const result = { ...resultDefault };
+    // will not send common result by http
+    const stopSendByHttp = ctx.request.body.stopSendByHttp;
 
     // get active sds list
     const wrxList = await WrxController.list.bind(WrxController)({ ctx });
@@ -132,10 +144,11 @@ class WrxMercury206Controller {
     for (const [index, { label, method }] of steps.entries()) {
       try {
         console.log(new Date(), `Complex request for "${label}" | imei: ${MERCURY_206_RN_IMEI}`);
-        const response = await method.call(this, ctx);
+        const response = await method.call(this, fakeCtx, next);
 
         if (response) {
           if (response.hasOwnProperty('error') && response.error) {
+            console.log(new Date(), `Complex answer for "${label}": Fail | imei: ${MERCURY_206_RN_IMEI}`);
             result[label].error = response;
           } else {
             console.log(new Date(), `Complex answer for "${label}": Ok | imei: ${MERCURY_206_RN_IMEI}`);
@@ -152,7 +165,13 @@ class WrxMercury206Controller {
       }
     }
 
-    return result;
+    if (!stopSendByHttp) {
+      ctx.status = 200;
+      ctx.body = result;
+    } else {
+      console.log(new Date(), 'Set metering data to base');
+      instanceOfMeteringDataService.create(result);
+    }
   }
 }
 

@@ -1,6 +1,6 @@
 import config from 'config';
 import { Strategy, ExtractJwt } from 'passport-jwt';
-import { UserSchema } from '../../../../schemas/user/user-schema.js';
+import { UserSchema } from '../../../../schemas/user-schema.js';
 
 const AUTH_JWT_SECRET = config.get('auth.jwt.secret');
 
