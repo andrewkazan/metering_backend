@@ -12,7 +12,8 @@ const WAIT_METERING_TIME = 60 * 1000;
 const POLLING_GAP = 10 * 60 * 1000;
 
 class WrxMercury206Controller {
-  pollingInterval;
+  pollingFlag = false;
+  pollingTimeout;
 
   constructor() {}
 
@@ -26,13 +27,15 @@ class WrxMercury206Controller {
     console.log(new Date(), `Is polling complex request: ${pollingFlag}`);
 
     if (pollingFlag) {
-      // call one time complex request immediately from start
+      // cleat old polling timeout if it existed
+      if (this.pollingTimeout) {
+        clearTimeout(this.pollingTimeout);
+      }
+
+      this.pollingFlag = pollingFlag;
       this.complexRequestMercury206(ctx, next);
-      this.pollingInterval = setInterval(() => {
-        this.complexRequestMercury206(ctx, next);
-      }, POLLING_GAP);
     } else {
-      clearInterval(this.pollingInterval);
+      clearTimeout(this.pollingTimeout);
     }
 
     ctx.status = 200;
@@ -171,6 +174,13 @@ class WrxMercury206Controller {
     } else {
       console.log(new Date(), 'Set metering data to base');
       instanceOfMeteringDataService.create(result);
+    }
+
+    // at the finish, set new next polling timeout, if it needed
+    if (this.pollingFlag) {
+      this.pollingTimeout = setTimeout(() => {
+        this.complexRequestMercury206(ctx, next);
+      }, POLLING_GAP);
     }
   }
 }
