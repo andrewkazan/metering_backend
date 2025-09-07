@@ -7,6 +7,7 @@ import { DeviceController } from '../controllers/device-controller.js';
 import { jwtPassport } from '../controllers/oauth/jwt.js';
 import { WrxController } from '../controllers/wrx-controller/wrx-controller.js';
 import { WrxMercury206Controller } from '../controllers/wrx-controller/wrx-mercury-206-controller.js';
+import { MeteringDataController } from '../controllers/metering-data-controller.js';
 
 export const router = new Router({ prefix: '/api' });
 
@@ -65,3 +66,9 @@ router.post(
   WrxMercury206Controller.complexRequestMercury206.bind(WrxMercury206Controller),
 );
 router.post('/wrx/togglePolling', jwtPassport, WrxMercury206Controller.handlePolling.bind(WrxMercury206Controller));
+// wrx data items
+router.get('/meteringdata/list', jwtPassport, MeteringDataController.list.bind(MeteringDataController));
+router.post('/meteringdata', jwtPassport, MeteringDataController.create.bind(MeteringDataController));
+router.get('/meteringdata/:id', jwtPassport, MeteringDataController.read.bind(MeteringDataController));
+router.put('/meteringdata/:id', jwtPassport, MeteringDataController.update.bind(MeteringDataController));
+router.delete('/meteringdata/:id', jwtPassport, MeteringDataController.delete.bind(MeteringDataController));

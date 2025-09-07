@@ -16,6 +16,7 @@ export class MeteringDataService {
       !powerNetParameters
     ) {
       console.error(new Date(), 'Has not required metering item data for save');
+      throw ApiError.BadRequest({ message: 'Has not required metering item data for save' });
     }
 
     const meteringData = await MeteringDataItemSchema.create(data);
@@ -26,32 +27,37 @@ export class MeteringDataService {
   async read(id) {
     if (!id) {
       console.error(new Date(), 'Has not id for get metering item');
+      throw ApiError.BadRequest({ message: 'Has not id for get metering item' });
     }
 
     const isValidId = mongoose.Types.ObjectId.isValid(id);
 
     if (!isValidId) {
       console.error(new Date(), "It's not a valid metering item id");
+      throw ApiError.BadRequest({ message: "It's not a valid metering item id" });
     }
 
     const findSuchMeteringItem = await MeteringDataItemSchema.findById(id);
 
     if (!findSuchMeteringItem) {
       console.error(new Date(), 'Has not such metering item');
+      throw ApiError.BadRequest({ message: 'Has not such metering item' });
     }
 
-    return findSuchObject;
+    return findSuchMeteringItem;
   }
 
   async update(id, data) {
     if (!id) {
       console.error(new Date(), 'Has not id for update metering item');
+      throw ApiError.BadRequest({ message: 'Has not id for update metering item' });
     }
 
     const isValidId = mongoose.Types.ObjectId.isValid(id);
 
     if (!isValidId) {
       console.error(new Date(), "It's not a valid metering item id");
+      throw ApiError.BadRequest({ message: "It's not a valid metering item id" });
     }
 
     const { dateTime, limitPower, limitEnergy, powerReading, valueOfEnergy, batteryVoltage, powerNetParameters } = data;
@@ -66,12 +72,14 @@ export class MeteringDataService {
       !powerNetParameters
     ) {
       console.error(new Date(), 'Has not required metering item data for update');
+      throw ApiError.BadRequest({ message: 'Has not required metering item data for update' });
     }
 
     const updatedMeteringItem = await MeteringDataItemSchema.findByIdAndUpdate(id, data, { new: true });
 
     if (!updatedMeteringItem) {
       console.error(new Date(), 'Has not such metering item for update');
+      throw ApiError.BadRequest({ message: 'Has not such metering item for update' });
     }
 
     return updatedMeteringItem;
@@ -80,12 +88,14 @@ export class MeteringDataService {
   async delete(id) {
     if (!id) {
       console.error(new Date(), 'Has not id for delete metering item');
+      throw ApiError.BadRequest({ message: 'Has not id for delete metering item' });
     }
 
     const isValidId = mongoose.Types.ObjectId.isValid(id);
 
     if (!isValidId) {
       console.error(new Date(), "It's not a valid metering item id");
+      throw ApiError.BadRequest({ message: "It's not a valid metering item id" });
     }
 
     const deletedMeteringItem = await MeteringDataItemSchema.findByIdAndDelete(id);
@@ -100,6 +110,7 @@ export class MeteringDataService {
   async list({ start, end }) {
     if (!start || !end) {
       console.error(new Date(), 'Has not start or end for get metering item list');
+      throw ApiError.BadRequest({ message: 'Has not start or end for get metering item list' });
     }
 
     return await MeteringDataItemSchema.find({
