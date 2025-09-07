@@ -1,7 +1,7 @@
 import config from 'config';
 import jwt from 'jsonwebtoken';
-import { TokenSchema } from '../../schemas/token/token-schema.js';
-import { UserSchema } from '../../schemas/user/user-schema.js';
+import { TokenSchema } from '../../schemas/token-schema.js';
+import { UserSchema } from '../../schemas/user-schema.js';
 
 const TOKEN_SECRET = config.get('auth.jwt.secret');
 const TOKEN_ALGORITHM = config.get('auth.jwt.algorithm');

@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+import { Schema, model } from 'mongoose';
 
-const schema = new mongoose.Schema({
+const schema = new Schema({
   accessToken: {
     type: String,
     required: true,
@@ -22,4 +22,4 @@ const schema = new mongoose.Schema({
 
 schema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
-export const TokenSchema = mongoose.model('Token', schema);
+export const TokenSchema = model('Token', schema);

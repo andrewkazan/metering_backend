@@ -1,7 +1,7 @@
 import config from 'config';
 import { promisify } from 'util';
 import { pbkdf2, randomBytes } from 'crypto';
-import mongoose from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 const randomBytesPromise = promisify(randomBytes);
 const pbkdf2Promise = promisify(pbkdf2);
@@ -31,7 +31,7 @@ function removeProperties(...properties) {
   };
 }
 
-const userSchema = new mongoose.Schema(
+const userSchema = new Schema(
   {
     email: {
       type: String,
@@ -99,4 +99,4 @@ userSchema.statics.login = async function ({ email, password }) {
   return user;
 };
 
-export const UserSchema = mongoose.model('user', userSchema);
+export const UserSchema = model('user', userSchema);

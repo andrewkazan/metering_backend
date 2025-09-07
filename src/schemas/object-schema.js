@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+import { Schema, model } from 'mongoose';
 
-const schema = new mongoose.Schema({
+const schema = new Schema({
   name: {
     type: String,
     required: true,
@@ -39,4 +39,4 @@ schema.virtual('numSDSs', {
 schema.set('toObject', { virtuals: true });
 schema.set('toJSON', { virtuals: true });
 
-export const ObjectSchema = mongoose.model('Object', schema);
+export const ObjectSchema = model('Object', schema);

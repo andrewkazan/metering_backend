@@ -1,7 +1,7 @@
 import passport from 'koa-passport';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import config from 'config';
-import { TokenSchema } from '../../../schemas/token/token-schema.js';
+import { TokenSchema } from '../../../schemas/token-schema.js';
 
 const TOKEN_SECRET = config.get('auth.jwt.secret');
 
