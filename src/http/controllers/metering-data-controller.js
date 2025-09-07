@@ -32,8 +32,6 @@ class MeteringDataController {
 
   async list(ctx) {
     const { start, end } = ctx.query;
-    console.log('--- service ---', ctx.query);
-
     const meteringDataList = await instanceOfMeteringDataService.list({ start, end });
     ctx.status = 200;
     ctx.body = meteringDataList;
