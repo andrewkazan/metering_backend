@@ -1,0 +1,7 @@
+services:
+  db_tools:
+    image: mongo:4.4
+    depends_on:
+      - mongodb
+    volumes:
+      - ./backups:/backups

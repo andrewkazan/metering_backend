@@ -12,3 +12,4 @@ config/**/local*
 
 # data base
 mongo_db/
+backups/
