@@ -40,3 +40,11 @@ services:
       - '4000:4000'
       - '4001:4001'
     command: ["npm", "start"]
+
+  db_tools:
+    image: mongodb/mongodb-database-tools:100.9.4-ubuntu2204
+    depends_on:
+      - mongodb
+    volumes:
+      - ./backups:/backup
+    profiles: ["tools"]
